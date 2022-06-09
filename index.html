@@ -1,0 +1,86 @@
+<html>
+    <head>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
+
+        <script>
+            var is_compute = true // 연산 수행 여부
+            var lastkey_type = "" // 마지막 입력값 타입
+            $(document).ready(function () {
+                init_ui();
+            })
+
+            var array_ui = [["1", "2", "3", "+"],["4", "5", "6", "-"],["7", "8", "9", "*"],["C", "0", "=", "/"]] // ui 생성 배열
+
+            function init_ui() {
+                $("#div_cal").append(
+                    $("<div>").attr("id", "ui_result").css("width", "200px").css("height", "50px").css("text-align", "right").css("font-size", "32px").css("font-weight", "bold")
+                )
+                
+                for(var i = 0; i < array_ui.length; i++) {
+                    var ui_div = $("<div>")
+                    for(var j = 0; j < array_ui[i].length; j++) {
+                        $(ui_div).append(
+                            $("<input>").attr("type", "button").css("width", "50px").css("height", "50px").data("key",array_ui[i][j]).val(array_ui[i][j]).on("click", function () {
+                                if($(this).data("key") == "C") { // "C" 버튼 클릭시 모두 삭제
+                                    $("#ui_result").text("")
+                                    is_compute = true
+                                    lastkey_type = ""
+                                }
+                                else if($(this).data("key") == "=") { // "=" 버튼 클릭시
+                                    var _result = $("#ui_result").text()
+                                    if(_result != "") { // 입력값이 없을 경우 = 처리 안함
+                                        $("#ui_result").text(eval(_result))
+                                        _result += "=" + $("#ui_result").text()
+                                        is_compute = true
+                                        lastkey_type = ""
+
+                                        // 히스토리 기록
+                                        $("#div_history").append($("<p>").text(_result).append(
+                                            $("<a>").attr("href", "#").css("margin-left", "20px").text("삭제").on("click", function () {
+                                                if(confirm("삭제 하시겠습니까?")) {
+                                                    $(this).parent().remove() //선택한 해당 history만 삭제
+                                                }
+                                                return false; //이벤트를 발생시키지 않음
+                                            })
+                                        ))
+                                    }
+                                }
+                                else {
+                                    var key_type = "number"
+                                    if($(this).data("key") == "+" || $(this).data("key") == "-" || $(this).data("key") == "*" || $(this).data("key") == "/") {
+                                        key_type = "operator"
+                                    }
+                                    if(lastkey_type == "operator" && key_type == "operator") { // 연산자가 연속 입력될 경우 무시
+                                        return
+                                    }
+                                    if(is_compute) {
+                                        // 최초 입력이 0,+,-,*,/ 일 경우 입력 안되도록 처리
+                                        if($(this).data("key") != "0" && key_type != "operator") {
+                                            $("#ui_result").text($(this).data("key"))
+                                            is_compute = false
+                                        }
+                                    }
+                                    else {
+                                        $("#ui_result").text($("#ui_result").text() + $(this).data("key"))                                        
+                                    }
+                                    lastkey_type = key_type; // 마지막 입력 타입 기록
+                                }
+                            })
+                        )
+                    }
+                    $("#div_cal").append(ui_div)
+                }
+
+                $("#div_cal").append(
+                    $("<div>").attr("id", "div_history").append(
+                        $("<p>").css("font-weight", "bold").text("History")
+                    )
+                )
+            }
+        </script>
+    </head>
+    <body>
+        <div id="div_cal">
+        </div>
+    </body>
+</html>
