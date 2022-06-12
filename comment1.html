@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+    <head>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
+        <script>
+            $(function() {
+                $("#save_btn").on("click", function() {
+                    var value = $("input").val();
+      
+                    if (value !== "") {
+                        var element = $("<li></li>").text(value);
+                        $(element).append("         <button class='edit_btn'>수정</button>");
+                        $(element).append("         <button class='remove_btn'>삭제</button>");
+                        //$(element).append($("<p>").append("<button class='empty_btn'>전체 삭제</button>"));
+                        $("#comment").append(element);
+                        $("input").val("");
+                        $(".remove_btn").on("click", function() {
+                            $(this).parent().remove();
+                        });
+                        $(".empty_btn").on("click", function() {
+                            $("#comment").empty();
+                        });
+
+                        var _Edit = null;
+                        $(".edit_btn").on("click", function() {
+                            //_Edit = $(this).closest("ol");
+                            //var _input = $(_Edit).find($(this).closest("li")).text();
+                            _Edit = $(this).closest("ol");
+                            var _input = $(_Edit).find($(this).closest("li")).text();
+                            $("input").val(_input);
+
+                            //$("input").val($(this).text());s
+                            //$("input").val(value);
+                            //$("input").val($(this).data());
+
+                            //var editValue = $(this).parent();
+                            //$("input").val($(this).value());aaa
+
+                            // var div = $(this);
+                            // var tb = div.find('input:text');
+                            // if (tb.length) {
+                            //     div.text(tb.val());
+                            // }else {
+                            //     tb = $('<input>').prop({
+                            //         'type' : 'text',
+                            //         'value' : div.text()
+                            //     });
+                            //     div.empty().append(tb);
+                            //     tb.focus();
+                            // }
+                        });
+                        // $(".container").append($("<p>").append("<button class='empty_btn'>전체 삭제</button>"));
+                        // $(".empty_btn").on("click", function() {
+                        //     $("#comment").empty();
+                        // });
+                    
+                    }
+                });
+
+                //전체 삭제
+                $(".container").append($("<p>").append("<button class='empty_btn'>전체 삭제</button>"));
+                $(".empty_btn").on("click", function() {
+                    $("#comment").empty(); //댓글 리스트 모두 지우기
+                    $("input").val(""); //댓글창에 있는 것도 지우기
+                });
+            });
+        </script>
+    </head>
+    <body>
+        <div class="container">
+            <h1>댓글 게시판</h1>
+            <input type="text" placeholder="댓글을 입력하세요">
+            <button id="save_btn">저장</button>
+            <ol id="comment"></ol>
+        </div>
+    </body>
+</html>
