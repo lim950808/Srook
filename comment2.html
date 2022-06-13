@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+    <head>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
+        <script src="https://code.jquery.com/ui/1.13.1/jquery-ui.js"></script>
+        <script>
+            var targetItem = null;
+
+            $(document).ready(function() {
+                $(".btn_save").on("click", function () {
+                    // 저장처리
+                    if($(".txt_comment").val() == ""){
+                        alert("댓글을 입력하세요.")
+                        return false;
+                    }
+                    addItem($(".txt_comment").val());
+                    $(".txt_comment").val("")
+                })
+            })
+
+            // 추가
+            function addItem(_comment) {
+                // 주석을 잘 달아야죠
+                if(targetItem == null) {
+                    // 신규일때는 리스트에 추가할 div를 생성해주고
+                    targetItem = $("<div>").css("border", "1px solid #000");  
+                }
+                else {
+                    // 수정일때는 선택한 element를 가져와서 아래에 있는 자식 노드를 초기화 한다.
+                    $(targetItem).children().remove()
+                }
+
+                $(targetItem).draggable(); // 드레그 허용 함수
+
+                $(targetItem).append(
+                    $("<span>").text(_comment)
+                ).append(
+                    $("<a>").css("margin-left", "5px").attr("href", "#").text("edit").on("click", function () {
+                        targetItem = $(this).parent();
+                        $(".txt_comment").val($(this).parent().find("span").text())
+                    })
+                ).append(
+                    $("<a>").css("margin-left", "5px").attr("href", "#").text("delete").on("click", function () {
+                        $(this).parent().remove()
+                    })
+                )
+
+                if($(targetItem).parent().length == 0) {
+                    $(".div_list").append(
+                        $(targetItem)
+                    )
+                }
+
+                targetItem = null
+            }
+
+        </script>
+    </head>
+    <body>
+        <div class="container">
+            <h1>댓글 게시판</h1>
+            <input type="text" class="txt_comment" placeholder="댓글을 입력하세요">
+            <input class="btn_save" type="button" value="저장" />
+        </div>
+        <div class="div_list"></div>
+    </body>
+</html>
